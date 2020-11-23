@@ -2,12 +2,12 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const db = require('../models');
 
-// passport "serialize" your info and make it easier to login
+// Passport "serialize" your info and make it easier to login
 passport.serializeUser((user, cb) => {
     cb(null, user.id)
 });
 
-// passport "deserialize" is to take the id and look it up in the DB
+// Passport "deserialize" is to take the id and look it up in DB
 passport.deserializeUser((id, cb) => {
     db.user.findByPk(id)
     .then(user => {
@@ -16,9 +16,10 @@ passport.deserializeUser((id, cb) => {
         }
     })
     .catch(err => {
-        console.log(err)
+        console.log(err);
     })
-})
+});
+
 
 passport.use(new LocalStrategy({
     usernameField: 'email',
@@ -26,8 +27,10 @@ passport.use(new LocalStrategy({
 }, (email, password, cb) => {
     db.user.findOne({
         where: { email }
-    }).then(user => {
+    })
+    .then(user => {
         if (!user || !user.validPassword(password)) {
+            // Why null inside cb
             cb(null, false);
         } else {
             cb(null, user);

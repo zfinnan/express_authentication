@@ -36,8 +36,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       validate: {
         len: {
-          args: [12,99],
-          msg: 'Password must be between 12 and 99 characters'
+          args: [8,99],
+          msg: 'Password must be between 8 and 99 characters'
         }
       }
     }
@@ -51,10 +51,12 @@ module.exports = (sequelize, DataTypes) => {
   
     // Set password to equal the hash
     pendingUser.password = hash;
+    console.log(pendingUser);
   });
   
   user.prototype.validPassword = function(passwordTyped) {
     let correctPassword = bcrypt.compareSync(passwordTyped, this.password);
+    console.log('Inside of validPassword', correctPassword)
   
       // return boolean value based on correct password or not
     return correctPassword;
@@ -62,8 +64,10 @@ module.exports = (sequelize, DataTypes) => {
   
   // Remove the password before it gets serialized
   user.prototype.toJSON = function() {
+    console.log('Inside of the toJSON method')
     let userData = this.get();
     delete userData.password;
+    console.log(userData)
     return userData;
   }
   return user;
